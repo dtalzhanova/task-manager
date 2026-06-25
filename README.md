@@ -1,32 +1,64 @@
-# React + TypeScript + Vite
+# TaskFlow — Персональный таск-менеджер с управлением командой
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Веб-приложение для организации рабочих и личных задач, а также отслеживания поручений сотрудникам. Работает в браузере на компьютере и телефоне.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Мои задачи
+- **Работа** — канбан-доска с колонками: Срочно / Важно / Запланировано / Готово
+- **Личное** — недельный календарь с задачами по дням
+- Drag & drop перемещение задач между колонками
+- Повторяющиеся задачи (ежедневно, еженедельно, по будням, ежемесячно)
+- Цветовая индикация сроков (просрочено / горит / в норме)
+- Редактирование и удаление задач
 
-## React Compiler
+### Управление командой
+- Карточки сотрудников с бейджами департаментов и счётчиками задач
+- Поручения с приоритетами, сроками и статусами (В ожидании → В работе → Выполнено)
+- Назначение задачи нескольким исполнителям одновременно
+- Комментарии к поручениям (от руководителя и директоров)
+- Шаринг задач между директорами
+- Редактирование и удаление сотрудников
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Роли и доступ
+- **Руководитель** — полный доступ ко всем задачам и команде
+- **Директор** — видит только свои поручения, может менять статус и комментировать
 
-## Expanding the Oxlint configuration
+### WhatsApp уведомления
+- Новое поручение → уведомление сотруднику
+- Смена статуса / комментарий от сотрудника → уведомление руководителю
+- Интеграция через WhatsApp Business Cloud API (Meta)
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### Дополнительно
+- Тёмная и светлая тема
+- Мобильная адаптация (PWA — можно установить на телефон)
+- Данные сохраняются в localStorage
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Быстрый старт
+
+```bash
+# Установка
+cd task-manager
+npm install
+
+# Запуск
+npm run dev
+
+# Запуск с доступом по сети (для телефона)
+npm run dev -- --host
+
+# Сервер уведомлений WhatsApp (опционально)
+npm run server
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Приложение откроется на `http://localhost:5173`
+
+## Установка на телефон
+
+1. Откройте `http://<IP-вашего-компьютера>:5173` в браузере телефона
+2. Нажмите «Добавить на главный экран»
+3. Приложение будет работать как обычное приложение
+
+## Технологии
+
+React, TypeScript, Vite, Tailwind CSS, dnd-kit, Lucide Icons, Express (сервер уведомлений)
