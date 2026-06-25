@@ -85,12 +85,12 @@ export function TeamView() {
             onClick={() => setShowWhatsAppSettings(!showWhatsAppSettings)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               showWhatsAppSettings
-                ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300'
                 : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200'
             }`}
           >
             <MessageCircle size={18} />
-            WhatsApp
+            Telegram
           </button>
           <button
             onClick={() => setShowAddForm(true)}
