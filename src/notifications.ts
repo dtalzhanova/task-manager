@@ -1,42 +1,65 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001';
+const SETTINGS_KEY = 'taskflow-whatsapp-settings';
+
+interface WhatsAppSettings {
+  apiToken: string;
+  phoneNumberId: string;
+  managerPhone: string;
+}
+
+function loadSettings(): WhatsAppSettings {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch { /* ignore */ }
+  return { apiToken: '', phoneNumberId: '', managerPhone: '' };
+}
+
+function saveSettings(settings: WhatsAppSettings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
 
 export async function sendWhatsApp(phone: string, message: string): Promise<boolean> {
-  try {
-    const res = await fetch(`${API_BASE}/api/whatsapp/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, message }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      console.warn('WhatsApp notification failed:', data.error);
-      return false;
-    }
-    return true;
-  } catch {
-    console.warn('Notification server unavailable');
-    return false;
-  }
-}
+  const { apiToken, phoneNumberId } = loadSettings();
+  if (!apiToken || !phoneNumberId || !phone) return false;
 
-export async function getWhatsAppSettings(): Promise<{ hasToken: boolean; phoneNumberId: string; managerPhone: string }> {
-  try {
-    const res = await fetch(`${API_BASE}/api/whatsapp/settings`);
-    return await res.json();
-  } catch {
-    return { hasToken: false, phoneNumberId: '', managerPhone: '' };
-  }
-}
+  const cleanPhone = phone.replace(/[^\d]/g, '');
 
-export async function saveWhatsAppSettings(settings: { apiToken?: string; phoneNumberId?: string; managerPhone?: string }): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE}/api/whatsapp/settings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(settings),
-    });
+    const res = await fetch(
+      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to: cleanPhone,
+          type: 'text',
+          text: { body: message },
+        }),
+      }
+    );
     return res.ok;
   } catch {
+    console.warn('WhatsApp send failed');
     return false;
   }
+}
+
+export function getWhatsAppSettings(): { hasToken: boolean; phoneNumberId: string; managerPhone: string } {
+  const s = loadSettings();
+  return { hasToken: !!s.apiToken, phoneNumberId: s.phoneNumberId ? '***' : '', managerPhone: s.managerPhone };
+}
+
+export function saveWhatsAppSettings(settings: { apiToken?: string; phoneNumberId?: string; managerPhone?: string }): boolean {
+  const current = loadSettings();
+  const updated: WhatsAppSettings = {
+    apiToken: settings.apiToken !== undefined ? settings.apiToken : current.apiToken,
+    phoneNumberId: settings.phoneNumberId !== undefined ? settings.phoneNumberId : current.phoneNumberId,
+    managerPhone: settings.managerPhone !== undefined ? settings.managerPhone : current.managerPhone,
+  };
+  saveSettings(updated);
+  return true;
 }

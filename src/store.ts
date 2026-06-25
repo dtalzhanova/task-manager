@@ -292,11 +292,10 @@ export function createStore() {
       if (prevStatus !== status && state.currentUser.role === 'director' && prevAssignment) {
         const emp = state.employees.find(e => e.id === employeeId);
         const statusLabels: Record<AssignmentStatus, string> = { pending: 'В ожидании', in_progress: 'В работе', done: 'Выполнено' };
-        getWhatsAppSettings().then(s => {
-          if (s.managerPhone) {
-            sendWhatsApp(s.managerPhone, `📊 ${emp?.name || 'Сотрудник'} изменил статус задачи "${prevAssignment.title}" → ${statusLabels[status]}`);
-          }
-        });
+        const s = getWhatsAppSettings();
+        if (s.managerPhone) {
+          sendWhatsApp(s.managerPhone, `📊 ${emp?.name || 'Сотрудник'} изменил статус задачи "${prevAssignment.title}" → ${statusLabels[status]}`);
+        }
       }
     },
 
@@ -314,11 +313,10 @@ export function createStore() {
 
       const assignment = state.assignments.find(a => a.id === assignmentId);
       if (authorRole === 'director' && assignment) {
-        getWhatsAppSettings().then(s => {
-          if (s.managerPhone) {
-            sendWhatsApp(s.managerPhone, `💬 ${author} прокомментировал "${assignment.title}":\n${text}`);
-          }
-        });
+        const s = getWhatsAppSettings();
+        if (s.managerPhone) {
+          sendWhatsApp(s.managerPhone, `💬 ${author} прокомментировал "${assignment.title}":\n${text}`);
+        }
       }
       if (authorRole === 'manager' && assignment) {
         const emp = state.employees.find(e => e.id === employeeId);

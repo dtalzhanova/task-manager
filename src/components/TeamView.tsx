@@ -25,10 +25,9 @@ export function TeamView() {
 
   useEffect(() => {
     if (showWhatsAppSettings) {
-      getWhatsAppSettings().then(s => {
-        setWaManagerPhone(s.managerPhone);
-        setWaStatus(s.hasToken ? 'Подключено' : 'Не настроено');
-      });
+      const s = getWhatsAppSettings();
+      setWaManagerPhone(s.managerPhone);
+      setWaStatus(s.hasToken ? 'Подключено' : 'Не настроено');
     }
   }, [showWhatsAppSettings]);
 
@@ -150,14 +149,15 @@ export function TeamView() {
             </div>
           </div>
           <button
-            onClick={async () => {
-              const ok = await saveWhatsAppSettings({
+            onClick={() => {
+              saveWhatsAppSettings({
                 apiToken: waToken || undefined,
                 phoneNumberId: waPhoneId || undefined,
                 managerPhone: waManagerPhone,
               });
-              setWaStatus(ok ? 'Подключено' : 'Ошибка — сервер недоступен');
-              if (ok) { setWaToken(''); setWaPhoneId(''); }
+              setWaStatus('Сохранено');
+              setWaToken('');
+              setWaPhoneId('');
             }}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
           >
