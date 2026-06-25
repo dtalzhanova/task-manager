@@ -3,7 +3,7 @@ import { useAppState, useStore } from '../StoreContext';
 import type { Employee } from '../types';
 import { EmployeePage } from './EmployeePage';
 import { UserPlus, Users, AlertCircle, CheckCircle, Pencil, Trash2, X, MessageCircle } from 'lucide-react';
-import { getTelegramSettings, saveTelegramSettings } from '../notifications';
+import { getTelegramSettings, saveTelegramSettings, sendTelegram } from '../notifications';
 
 export function TeamView() {
   const state = useAppState();
@@ -163,7 +163,6 @@ export function TeamView() {
               type="button"
               onClick={async () => {
                 setTgTestResult('Отправка...');
-                const { sendTelegram, getTelegramSettings } = await import('../notifications');
                 const s = getTelegramSettings();
                 if (!s.hasToken || !s.managerChatId) {
                   setTgTestResult('❌ Сначала сохраните токен и Chat ID');
