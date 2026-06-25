@@ -1,5 +1,5 @@
 import type { AppState, Employee, PersonalTask, Assignment, AssignmentExecutor, Comment, TaskColumn, AssignmentStatus, RecurringTemplate, RecurrenceRule } from './types';
-import { sendWhatsApp, getWhatsAppSettings } from './notifications';
+import { sendTelegram, getTelegramSettings } from './notifications';
 
 const DEFAULT_EMPLOYEES: Employee[] = [
   { id: '1', name: 'Сотрудник 1', department: 'ХХХХХ', badgeColor: 'bg-blue-500' },
@@ -270,7 +270,7 @@ export function createStore() {
         const emp = state.employees.find(e => e.id === execId);
         if (emp?.phone) {
           const dueLine = dueDate ? `\nСрок: ${new Date(dueDate).toLocaleDateString('ru-RU')}` : '';
-          sendWhatsApp(emp.phone, `📋 Новое поручение: "${title}"${dueLine}`);
+          sendTelegram(emp.phone, `📋 Новое поручение: "${title}"${dueLine}`);
         }
       }
     },
@@ -292,9 +292,9 @@ export function createStore() {
       if (prevStatus !== status && state.currentUser.role === 'director' && prevAssignment) {
         const emp = state.employees.find(e => e.id === employeeId);
         const statusLabels: Record<AssignmentStatus, string> = { pending: 'В ожидании', in_progress: 'В работе', done: 'Выполнено' };
-        const s = getWhatsAppSettings();
-        if (s.managerPhone) {
-          sendWhatsApp(s.managerPhone, `📊 ${emp?.name || 'Сотрудник'} изменил статус задачи "${prevAssignment.title}" → ${statusLabels[status]}`);
+        const s = getTelegramSettings();
+        if (s.managerChatId) {
+          sendTelegram(s.managerChatId, `📊 ${emp?.name || 'Сотрудник'} изменил статус задачи "${prevAssignment.title}" → ${statusLabels[status]}`);
         }
       }
     },
@@ -313,15 +313,15 @@ export function createStore() {
 
       const assignment = state.assignments.find(a => a.id === assignmentId);
       if (authorRole === 'director' && assignment) {
-        const s = getWhatsAppSettings();
-        if (s.managerPhone) {
-          sendWhatsApp(s.managerPhone, `💬 ${author} прокомментировал "${assignment.title}":\n${text}`);
+        const s = getTelegramSettings();
+        if (s.managerChatId) {
+          sendTelegram(s.managerChatId, `💬 ${author} прокомментировал "${assignment.title}":\n${text}`);
         }
       }
       if (authorRole === 'manager' && assignment) {
         const emp = state.employees.find(e => e.id === employeeId);
         if (emp?.phone) {
-          sendWhatsApp(emp.phone, `💬 Руководитель прокомментировал "${assignment.title}":\n${text}`);
+          sendTelegram(emp.phone, `💬 Руководитель прокомментировал "${assignment.title}":\n${text}`);
         }
       }
     },

@@ -1,65 +1,43 @@
-const SETTINGS_KEY = 'taskflow-whatsapp-settings';
+const SETTINGS_KEY = 'taskflow-telegram-settings';
 
-interface WhatsAppSettings {
-  apiToken: string;
-  phoneNumberId: string;
-  managerPhone: string;
+interface TelegramSettings {
+  botToken: string;
+  managerChatId: string;
 }
 
-function loadSettings(): WhatsAppSettings {
+function loadSettings(): TelegramSettings {
   try {
     const saved = localStorage.getItem(SETTINGS_KEY);
     if (saved) return JSON.parse(saved);
   } catch { /* ignore */ }
-  return { apiToken: '', phoneNumberId: '', managerPhone: '' };
+  return { botToken: '', managerChatId: '' };
 }
 
-function saveSettings(settings: WhatsAppSettings) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-}
-
-export async function sendWhatsApp(phone: string, message: string): Promise<boolean> {
-  const { apiToken, phoneNumberId } = loadSettings();
-  if (!apiToken || !phoneNumberId || !phone) return false;
-
-  const cleanPhone = phone.replace(/[^\d]/g, '');
+export async function sendTelegram(chatId: string, message: string): Promise<boolean> {
+  const { botToken } = loadSettings();
+  if (!botToken || !chatId) return false;
 
   try {
-    const res = await fetch(
-      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messaging_product: 'whatsapp',
-          to: cleanPhone,
-          type: 'text',
-          text: { body: message },
-        }),
-      }
-    );
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: message }),
+    });
     return res.ok;
   } catch {
-    console.warn('WhatsApp send failed');
     return false;
   }
 }
 
-export function getWhatsAppSettings(): { hasToken: boolean; phoneNumberId: string; managerPhone: string } {
+export function getTelegramSettings(): { hasToken: boolean; managerChatId: string } {
   const s = loadSettings();
-  return { hasToken: !!s.apiToken, phoneNumberId: s.phoneNumberId ? '***' : '', managerPhone: s.managerPhone };
+  return { hasToken: !!s.botToken, managerChatId: s.managerChatId };
 }
 
-export function saveWhatsAppSettings(settings: { apiToken?: string; phoneNumberId?: string; managerPhone?: string }): boolean {
+export function saveTelegramSettings(settings: { botToken?: string; managerChatId?: string }): void {
   const current = loadSettings();
-  const updated: WhatsAppSettings = {
-    apiToken: settings.apiToken !== undefined ? settings.apiToken : current.apiToken,
-    phoneNumberId: settings.phoneNumberId !== undefined ? settings.phoneNumberId : current.phoneNumberId,
-    managerPhone: settings.managerPhone !== undefined ? settings.managerPhone : current.managerPhone,
-  };
-  saveSettings(updated);
-  return true;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+    botToken: settings.botToken !== undefined ? settings.botToken : current.botToken,
+    managerChatId: settings.managerChatId !== undefined ? settings.managerChatId : current.managerChatId,
+  }));
 }

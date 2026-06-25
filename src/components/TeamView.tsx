@@ -3,7 +3,7 @@ import { useAppState, useStore } from '../StoreContext';
 import type { Employee } from '../types';
 import { EmployeePage } from './EmployeePage';
 import { UserPlus, Users, AlertCircle, CheckCircle, Pencil, Trash2, X, MessageCircle } from 'lucide-react';
-import { getWhatsAppSettings, saveWhatsAppSettings } from '../notifications';
+import { getTelegramSettings, saveTelegramSettings } from '../notifications';
 
 export function TeamView() {
   const state = useAppState();
@@ -18,16 +18,15 @@ export function TeamView() {
   const [editDept, setEditDept] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [showWhatsAppSettings, setShowWhatsAppSettings] = useState(false);
-  const [waToken, setWaToken] = useState('');
-  const [waPhoneId, setWaPhoneId] = useState('');
-  const [waManagerPhone, setWaManagerPhone] = useState('');
-  const [waStatus, setWaStatus] = useState('');
+  const [tgToken, setTgToken] = useState('');
+  const [tgManagerChatId, setTgManagerChatId] = useState('');
+  const [tgStatus, setTgStatus] = useState('');
 
   useEffect(() => {
     if (showWhatsAppSettings) {
-      const s = getWhatsAppSettings();
-      setWaManagerPhone(s.managerPhone);
-      setWaStatus(s.hasToken ? 'Подключено' : 'Не настроено');
+      const s = getTelegramSettings();
+      setTgManagerChatId(s.managerChatId);
+      setTgStatus(s.hasToken ? 'Подключено' : 'Не настроено');
     }
   }, [showWhatsAppSettings]);
 
@@ -108,58 +107,48 @@ export function TeamView() {
         <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-xs sm:text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
-              <MessageCircle size={16} className="text-green-500" /> <span className="hidden sm:inline">Настройки</span> WhatsApp <span className="hidden sm:inline">уведомлений</span>
+              <MessageCircle size={16} className="text-sky-500" /> Telegram уведомления
             </h3>
-            <span className={`text-xs px-2 py-1 rounded-full ${waStatus === 'Подключено' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-500'}`}>
-              {waStatus}
+            <span className={`text-xs px-2 py-1 rounded-full ${tgStatus === 'Подключено' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-500'}`}>
+              {tgStatus}
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Используется WhatsApp Business Cloud API (Meta). Получите токен и Phone Number ID на{' '}
-            <span className="text-indigo-500">developers.facebook.com</span>.
+            1. Создайте бота у <span className="text-sky-500">@BotFather</span> в Telegram → получите токен.<br/>
+            2. Узнайте свой Chat ID — напишите боту <span className="text-sky-500">@userinfobot</span>.<br/>
+            3. Введите токен и ваш Chat ID ниже.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">API Token</label>
+              <label className="block text-xs text-gray-500 mb-1">Токен бота</label>
               <input
                 type="password"
-                value={waToken}
-                onChange={e => setWaToken(e.target.value)}
-                placeholder="EAAx..."
+                value={tgToken}
+                onChange={e => setTgToken(e.target.value)}
+                placeholder="1234567890:AAF..."
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200"
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Phone Number ID</label>
+              <label className="block text-xs text-gray-500 mb-1">Ваш Chat ID (руководитель)</label>
               <input
-                value={waPhoneId}
-                onChange={e => setWaPhoneId(e.target.value)}
-                placeholder="1234567890"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Ваш номер (руководитель)</label>
-              <input
-                value={waManagerPhone}
-                onChange={e => setWaManagerPhone(e.target.value)}
-                placeholder="+7XXXXXXXXXX"
+                value={tgManagerChatId}
+                onChange={e => setTgManagerChatId(e.target.value)}
+                placeholder="123456789"
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200"
               />
             </div>
           </div>
           <button
             onClick={() => {
-              saveWhatsAppSettings({
-                apiToken: waToken || undefined,
-                phoneNumberId: waPhoneId || undefined,
-                managerPhone: waManagerPhone,
+              saveTelegramSettings({
+                botToken: tgToken || undefined,
+                managerChatId: tgManagerChatId,
               });
-              setWaStatus('Сохранено');
-              setWaToken('');
-              setWaPhoneId('');
+              setTgStatus('Подключено');
+              setTgToken('');
             }}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+            className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 text-sm font-medium"
           >
             Сохранить
           </button>
@@ -189,8 +178,8 @@ export function TeamView() {
             <input value={newDept} onChange={e => setNewDept(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
           </div>
           <div className="flex-1 min-w-[150px]">
-            <label className="block text-xs text-gray-500 mb-1">WhatsApp номер</label>
-            <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="+7XXXXXXXXXX" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
+            <label className="block text-xs text-gray-500 mb-1">Telegram Chat ID</label>
+            <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="123456789" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
           </div>
           <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">Добавить</button>
           <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm dark:text-gray-300">Отмена</button>
@@ -214,8 +203,8 @@ export function TeamView() {
                 <input value={editDept} onChange={e => setEditDept(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">WhatsApp номер</label>
-                <input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="+7XXXXXXXXXX" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
+                <label className="block text-xs text-gray-500 mb-1">Telegram Chat ID</label>
+                <input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="123456789" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm dark:text-gray-200" />
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button onClick={() => setEditingEmployee(null)} className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm dark:text-gray-300">Отмена</button>
@@ -263,8 +252,8 @@ export function TeamView() {
                 </div>
               </div>
               {emp.phone && (
-                <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 mb-2">
-                  <MessageCircle size={12} /> {emp.phone}
+                <div className="flex items-center gap-1 text-xs text-sky-600 dark:text-sky-400 mb-2">
+                  <MessageCircle size={12} /> Telegram: {emp.phone}
                 </div>
               )}
               <div className="space-y-2">
