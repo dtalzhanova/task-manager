@@ -21,6 +21,7 @@ export function TeamView() {
   const [tgToken, setTgToken] = useState('');
   const [tgManagerChatId, setTgManagerChatId] = useState('');
   const [tgStatus, setTgStatus] = useState('');
+  const [tgSaved, setTgSaved] = useState(false);
 
   useEffect(() => {
     if (showWhatsAppSettings) {
@@ -141,24 +142,18 @@ export function TeamView() {
           </div>
           <button
             type="button"
-            onClick={e => {
+            onClick={() => {
               saveTelegramSettings({
                 botToken: tgToken || undefined,
                 managerChatId: tgManagerChatId,
               });
               setTgToken('');
-              setTgStatus('saved');
-              const btn = e.currentTarget;
-              btn.textContent = '✓ Сохранено!';
-              btn.style.background = '#16a34a';
-              setTimeout(() => {
-                btn.textContent = 'Сохранить';
-                btn.style.background = '';
-              }, 3000);
+              setTgSaved(true);
+              setTimeout(() => setTgSaved(false), 3000);
             }}
-            className="px-5 py-2.5 bg-sky-600 text-white rounded-lg text-sm font-medium transition-colors"
+            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors text-white ${tgSaved ? 'bg-green-600' : 'bg-sky-600 hover:bg-sky-700'}`}
           >
-            Сохранить
+            {tgSaved ? '✓ Сохранено!' : 'Сохранить'}
           </button>
         </div>
       )}
