@@ -5,11 +5,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const SETTINGS_KEY = 'whatsapp-settings';
 let settings = {
-  apiToken: '',
-  phoneNumberId: '',
-  managerPhone: '',
+  apiToken: process.env.WHATSAPP_TOKEN || '',
+  phoneNumberId: process.env.WHATSAPP_PHONE_ID || '',
+  managerPhone: process.env.MANAGER_PHONE || '',
 };
 
 app.get('/api/whatsapp/settings', (_req, res) => {
@@ -70,7 +69,7 @@ app.post('/api/whatsapp/send', async (req, res) => {
   }
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Notification server running on http://localhost:${PORT}`);
+  console.log(`Notification server running on port ${PORT}`);
 });

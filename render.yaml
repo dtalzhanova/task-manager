@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: taskflow-notifications
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_ID
+        sync: false
+      - key: MANAGER_PHONE
+        sync: false
