@@ -9,6 +9,7 @@ const DEFAULT_EMPLOYEES: Employee[] = [
 ];
 
 const STORAGE_KEY = 'task-manager-state';
+const DATA_VERSION = '2';
 
 function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -117,6 +118,12 @@ function generateRecurringTasks(state: AppState): AppState {
 
 function loadState(): AppState {
   try {
+    const version = localStorage.getItem(STORAGE_KEY + '-version');
+    if (version !== DATA_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.setItem(STORAGE_KEY + '-version', DATA_VERSION);
+      return getDefaultState();
+    }
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
