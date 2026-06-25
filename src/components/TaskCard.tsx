@@ -70,7 +70,7 @@ export function TaskCard({ task, onDelete, onEdit, overlay }: Props) {
           {CATEGORIES[task.category as TaskCategory]}
         </span>
         {task.recurringSourceId && (
-          <Repeat size={12} className="text-amber-500" title="Повторяющаяся" />
+          <Repeat size={12} className="text-amber-500" />
         )}
         {task.dueDate && (
           <span className={`text-xs flex items-center gap-1 ${

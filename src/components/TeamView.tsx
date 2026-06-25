@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAppState, useStore } from '../StoreContext';
 import type { Employee } from '../types';
 import { EmployeePage } from './EmployeePage';
-import { UserPlus, Users, AlertCircle, CheckCircle, Pencil, Trash2, X, Settings, MessageCircle } from 'lucide-react';
+import { UserPlus, Users, AlertCircle, CheckCircle, Pencil, Trash2, X, MessageCircle } from 'lucide-react';
 import { getWhatsAppSettings, saveWhatsAppSettings } from '../notifications';
 
 export function TeamView() {

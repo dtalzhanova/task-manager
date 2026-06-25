@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppState, useStore } from '../StoreContext';
 import { STATUSES } from '../types';
-import type { Assignment, AssignmentStatus } from '../types';
+import type { Assignment } from '../types';
 import { Send, Share2, X, Users } from 'lucide-react';
 
 interface Props {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAppState, useStore } from '../StoreContext';
 import { STATUSES } from '../types';
 import type { Employee, Assignment, AssignmentStatus, TaskPriority } from '../types';
-import { ArrowLeft, Plus, Trash2, MessageSquare, AlertCircle, Clock, Send, Share2, Users, Pencil } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, MessageSquare, AlertCircle, Clock, Share2, Users, Pencil } from 'lucide-react';
 import { AssignmentDetail } from './AssignmentDetail';
 import { EditAssignmentModal } from './EditAssignmentModal';
 

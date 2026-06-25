@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore, useAppState } from '../StoreContext';
-import { CATEGORIES, CATEGORY_COLORS, WEEKDAYS_SHORT } from '../types';
+import { CATEGORY_COLORS, WEEKDAYS_SHORT } from '../types';
 import type { TaskCategory, PersonalTask } from '../types';
 import { Plus, Trash2, ChevronLeft, ChevronRight, Pencil, Repeat, CheckCircle2 } from 'lucide-react';
 import { EditTaskModal } from './EditTaskModal';

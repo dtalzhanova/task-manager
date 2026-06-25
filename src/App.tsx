@@ -6,7 +6,7 @@ import { TeamView } from './components/TeamView';
 import { DirectorView } from './components/DirectorView';
 import { WeekCalendar } from './components/WeekCalendar';
 import type { TaskCategory } from './types';
-import { CATEGORIES, CATEGORY_COLORS } from './types';
+import { CATEGORIES } from './types';
 import { Briefcase, User } from 'lucide-react';
 
 const CATEGORY_ICONS: Record<TaskCategory, typeof Briefcase> = {
