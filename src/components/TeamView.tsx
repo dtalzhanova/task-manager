@@ -140,18 +140,22 @@ export function TeamView() {
             </div>
           </div>
           <button
+            type="button"
             onClick={() => {
               saveTelegramSettings({
                 botToken: tgToken || undefined,
                 managerChatId: tgManagerChatId,
               });
-              setTgStatus('Подключено');
+              setTgStatus('✓ Сохранено');
               setTgToken('');
             }}
-            className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 text-sm font-medium"
+            className="px-5 py-2.5 bg-sky-600 text-white rounded-lg hover:bg-sky-700 active:scale-95 text-sm font-medium transition-all"
           >
             Сохранить
           </button>
+          {tgStatus === '✓ Сохранено' && (
+            <p className="mt-2 text-sm text-green-600 dark:text-green-400 font-medium">✓ Настройки сохранены</p>
+          )}
         </div>
       )}
 
