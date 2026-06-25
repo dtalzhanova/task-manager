@@ -2,10 +2,10 @@ import type { AppState, Employee, PersonalTask, Assignment, AssignmentExecutor, 
 import { sendWhatsApp, getWhatsAppSettings } from './notifications';
 
 const DEFAULT_EMPLOYEES: Employee[] = [
-  { id: '1', name: 'Улан', department: 'ДУБО', badgeColor: 'bg-blue-500' },
-  { id: '2', name: 'Владимир', department: 'ДБУиО', badgeColor: 'bg-purple-500' },
-  { id: '3', name: 'Наталья', department: 'ДУАХД', badgeColor: 'bg-green-500' },
-  { id: '4', name: 'Айдар', department: 'УФК', badgeColor: 'bg-amber-500' },
+  { id: '1', name: 'Сотрудник 1', department: 'ХХХХХ', badgeColor: 'bg-blue-500' },
+  { id: '2', name: 'Сотрудник 2', department: 'ХХХХХ', badgeColor: 'bg-purple-500' },
+  { id: '3', name: 'Сотрудник 3', department: 'ХХХХХ', badgeColor: 'bg-green-500' },
+  { id: '4', name: 'Сотрудник 4', department: 'ХХХХХ', badgeColor: 'bg-amber-500' },
 ];
 
 const STORAGE_KEY = 'task-manager-state';
