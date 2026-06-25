@@ -22,6 +22,7 @@ export function TeamView() {
   const [tgManagerChatId, setTgManagerChatId] = useState('');
   const [tgStatus, setTgStatus] = useState('');
   const [tgSaved, setTgSaved] = useState(false);
+  const [tgTestResult, setTgTestResult] = useState('');
 
   useEffect(() => {
     if (showWhatsAppSettings) {
@@ -115,9 +116,10 @@ export function TeamView() {
             </span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            1. Создайте бота у <span className="text-sky-500">@BotFather</span> в Telegram → получите токен.<br/>
-            2. Узнайте свой Chat ID — напишите боту <span className="text-sky-500">@userinfobot</span>.<br/>
-            3. Введите токен и ваш Chat ID ниже.
+            1. Создайте бота у <span className="text-sky-500">@BotFather</span> → команда /newbot → получите токен.<br/>
+            2. Напишите своему боту <span className="text-sky-500">/start</span> — иначе он не сможет отправлять вам сообщения.<br/>
+            3. Узнайте свой Chat ID — напишите боту <span className="text-sky-500">@userinfobot</span>.<br/>
+            4. Введите токен и Chat ID ниже, нажмите «Сохранить», затем «Тест».
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
@@ -140,21 +142,46 @@ export function TeamView() {
               />
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              saveTelegramSettings({
-                botToken: tgToken || undefined,
-                managerChatId: tgManagerChatId,
-              });
-              setTgToken('');
-              setTgSaved(true);
-              setTimeout(() => setTgSaved(false), 3000);
-            }}
-            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors text-white ${tgSaved ? 'bg-green-600' : 'bg-sky-600 hover:bg-sky-700'}`}
-          >
-            {tgSaved ? '✓ Сохранено!' : 'Сохранить'}
-          </button>
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={() => {
+                saveTelegramSettings({
+                  botToken: tgToken || undefined,
+                  managerChatId: tgManagerChatId,
+                });
+                setTgToken('');
+                setTgSaved(true);
+                setTgTestResult('');
+                setTimeout(() => setTgSaved(false), 3000);
+              }}
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors text-white ${tgSaved ? 'bg-green-600' : 'bg-sky-600 hover:bg-sky-700'}`}
+            >
+              {tgSaved ? '✓ Сохранено!' : 'Сохранить'}
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                setTgTestResult('Отправка...');
+                const { sendTelegram, getTelegramSettings } = await import('../notifications');
+                const s = getTelegramSettings();
+                if (!s.hasToken || !s.managerChatId) {
+                  setTgTestResult('❌ Сначала сохраните токен и Chat ID');
+                  return;
+                }
+                const ok = await sendTelegram(s.managerChatId, '✅ TaskFlow: тестовое сообщение. Уведомления работают!');
+                setTgTestResult(ok ? '✅ Сообщение отправлено!' : '❌ Ошибка. Проверьте токен и Chat ID, и напишите боту /start');
+              }}
+              className="px-5 py-2.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              Тест
+            </button>
+            {tgTestResult && (
+              <span className={`text-sm font-medium ${tgTestResult.startsWith('✅') ? 'text-green-600' : tgTestResult === 'Отправка...' ? 'text-gray-500' : 'text-red-500'}`}>
+                {tgTestResult}
+              </span>
+            )}
+          </div>
         </div>
       )}
 
